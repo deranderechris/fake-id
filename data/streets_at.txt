@@ -1,0 +1,10 @@
+Hauptstrasse
+Bahnhofstrasse
+Schulstrasse
+Gartenweg
+Lindenweg
+Bergstrasse
+Wiesenweg
+Dorfstrasse
+Mozartstrasse
+Kirchenweg
