@@ -3,9 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <title>Fake ID Generator</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f4f4f4; }
+    h1 { margin-bottom: 10px; }
+    button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+    pre { background: white; padding: 20px; border-radius: 8px; }
+  </style>
 </head>
 <body>
+
   <h1>Fake ID Generator</h1>
-  <p>Loading...</p>
+  <button onclick="generate()">Neue Fake Identität erzeugen</button>
+
+  <h2>Ergebnis:</h2>
+  <pre id="output">{}</pre>
+
+  <script src="script.js"></script>
 </body>
 </html>
