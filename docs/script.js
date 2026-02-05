@@ -202,6 +202,130 @@ function downloadJson() {
 }
 
 function downloadPdf() {
+    window.print();
+}
+
+// erste Fake-ID direkt beim Laden
+window.addEventListener("load", generate);
+    const lastname = ds.lastnames[Math.floor(Math.random() * ds.lastnames.length)];
+    const username = `${firstname.toLowerCase()}${lastname.toLowerCase()}${Math.floor(Math.random()*90+10)}`;
+
+    return {
+        country,
+        name: `${firstname} ${lastname}`,
+        firstname,
+        lastname,
+        birthdate: randomBirthdate(),
+        address: {
+            street: ds.streets[Math.floor(Math.random()*ds.streets.length)],
+            house_number: randomHouseNumber(),
+            postcode: ds.postcodes[Math.floor(Math.random()*ds.postcodes.length)],
+            city: ds.cities[Math.floor(Math.random()*ds.cities.length)]
+        },
+        phone: randomPhone(country),
+        username,
+        email: `${username}@example.com`,
+        bank_account: generateFakeBankAccount(country),
+        credit_card: generateFakeCreditCard()
+    };
+}
+
+// ---------------------------------------------------------
+// UI RENDERING
+// ---------------------------------------------------------
+
+function renderPerson(data) {
+    const el = document.getElementById("tab-person");
+    el.innerHTML = `
+<div class="section-title">Person</div>
+<div class="field"><span class="label">Name:</span> ${data.name}</div>
+<div class="field"><span class="label">Geburtsdatum:</span> ${data.birthdate}</div>
+<div class="field"><span class="label">Telefon:</span> ${data.phone}</div>
+<div class="section-title">Adresse</div>
+<div class="field"><span class="label">Straße:</span> ${data.address.street} ${data.address.house_number}</div>
+<div class="field"><span class="label">PLZ / Ort:</span> ${data.address.postcode} ${data.address.city}</div>
+<div class="section-title">Login</div>
+<div class="field"><span class="label">Username:</span> ${data.username}</div>
+<div class="field"><span class="label">E-Mail:</span> ${data.email}</div>
+`;
+}
+
+function renderBank(data) {
+    const el = document.getElementById("tab-bank");
+    const b = data.bank_account;
+    el.innerHTML = `
+<div class="section-title">Bankkonto (Fake)</div>
+<div class="field"><span class="label">Bank:</span> ${b.bank_name}</div>
+<div class="field"><span class="label">IBAN:</span> ${b.iban}</div>
+<div class="field"><span class="label">BIC:</span> ${b.bic}</div>
+<div class="field"><span class="label">Hinweis:</span> ${b.note}</div>
+`;
+}
+
+function renderCard(data) {
+    const el = document.getElementById("tab-card");
+    const c = data.credit_card;
+    el.innerHTML = `
+<div class="section-title">Kreditkarte (Fake)</div>
+<div class="field"><span class="label">Kartennummer:</span> ${c.card_number}</div>
+<div class="field"><span class="label">Gültig bis:</span> ${c.expiry}</div>
+<div class="field"><span class="label">CVV:</span> ${c.cvv}</div>
+<div class="field"><span class="label">Hinweis:</span> ${c.note}</div>
+`;
+}
+
+function renderRaw(data) {
+    document.getElementById("output").textContent = JSON.stringify(data, null, 2);
+}
+
+function generate() {
+    const country = document.getElementById("country").value;
+    const data = generateIdentity(country);
+    lastData = data;
+    renderPerson(data);
+    renderBank(data);
+    renderCard(data);
+    renderRaw(data);
+}
+
+// ---------------------------------------------------------
+// TABS, DARK MODE, COPY, DOWNLOAD
+// ---------------------------------------------------------
+
+document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("tab-btn")) {
+        const tab = e.target.getAttribute("data-tab");
+        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+        e.target.classList.add("active");
+        document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+        document.getElementById("tab-" + tab).classList.add("active");
+    }
+});
+
+function toggleDarkMode() {
+    document.body.classList.toggle("dark");
+}
+
+function copyJson() {
+    if (!lastData) return;
+    const text = JSON.stringify(lastData, null, 2);
+    navigator.clipboard.writeText(text).catch(() => {});
+}
+
+function downloadJson() {
+    if (!lastData) return;
+    const blob = new Blob([JSON.stringify(lastData, null, 2)], {type: "application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "fake-id.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function downloadPdf() {
     // Browser-Standard: Drucken-Dialog → „Als PDF speichern“
     window.print();
 }
